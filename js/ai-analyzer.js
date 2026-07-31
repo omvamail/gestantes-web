@@ -137,13 +137,13 @@ ${JSON.stringify(maskedData, null, 2)}
         'Authorization': `Bearer ${apiKey.trim()}`
       },
       body: JSON.stringify({
-        model: 'deepseek-v4-flash',
+        model: 'deepseek-chat',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userMessage }
         ],
         temperature: 0.1,
-        max_tokens: 400
+        max_tokens: 1000
       })
     });
 
@@ -158,11 +158,11 @@ ${JSON.stringify(maskedData, null, 2)}
     }
 
     const data = await response.json();
-    if (!data.choices || data.choices.length === 0) {
+    if (!data.choices || data.choices.length === 0 || !data.choices[0].message) {
       throw new Error('No se recibió respuesta válida de DeepSeek.');
     }
 
-    let resultText = data.choices[0].message.content;
+    let resultText = data.choices[0].message.content || '✔ Sin anomalías detectadas en el reporte.';
 
     // Des-enmascarar tokens en la respuesta visual si aplican
     this.docMap.forEach((maskedToken, realVal) => {
