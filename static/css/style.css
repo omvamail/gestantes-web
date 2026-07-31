@@ -111,6 +111,26 @@ code {
 }
 .logo-text p { font-size: 0.72rem; color: var(--text-sub); margin-top: -2px; }
 
+.header-right-badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dedication-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(244,63,94,0.12);
+  border: 1px solid rgba(244,63,94,0.3);
+  border-radius: 99px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fb7185;
+  box-shadow: 0 0 12px rgba(244,63,94,0.15);
+}
+
 .header-badge {
   display: flex; align-items: center; gap: 8px;
   background: var(--primary-dim);
