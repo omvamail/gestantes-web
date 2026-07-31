@@ -56,8 +56,10 @@ class DeepSeekAnalyzer {
         const newRow = [...row];
 
         if (sheetName === '1 - Control') {
-          // Columna 2: NIT (índice 2)
+          // Col 2: NIT (índice 2)
           if (newRow[2]) newRow[2] = this.maskValue(this.ipsMap, newRow[2], 'NIT');
+          // Col 3: Código de la entidad reportadora (índice 3)
+          if (newRow[3]) newRow[3] = this.maskValue(this.ipsMap, newRow[3], 'EPS');
         } else if (sheetName === '2 - ID gestantes') {
           // Col 5: Código IPS (índice 5)
           if (newRow[5]) newRow[5] = this.maskValue(this.ipsMap, newRow[5], 'IPS');
