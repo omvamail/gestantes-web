@@ -102,9 +102,6 @@ def validate_excel(preview: dict) -> dict:
                 issues.append(_err(sheet, 2, 'Fecha fin', f"Fecha de fin inválida: '{r[5]}'"))
             elif fecha_ini and fecha_fin and fecha_fin < fecha_ini:
                 issues.append(_err(sheet, 2, 'Fechas', "La fecha de fin es anterior a la de inicio"))
-            # Future period warning
-            if fecha_fin and fecha_fin > today:
-                issues.append(_warn(sheet, 2, 'Fecha fin', "El periodo incluye fechas futuras"))
 
     # ──────────────────────────────────────────────────────────────
     # HOJA 2 - ID Gestantes
