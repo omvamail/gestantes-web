@@ -105,9 +105,6 @@ function validateWorkbook(wb) {
       } else if (fechaIni && fechaFin < fechaIni) {
         issues.push(createErr(sheet1Name, 2, 'Fechas', "La fecha de fin es anterior a la fecha de inicio"));
       }
-      if (fechaFin && fechaFin > today) {
-        issues.push(createWarn(sheet1Name, 2, 'Fecha fin', "El período incluye fechas futuras"));
-      }
     }
   }
 
