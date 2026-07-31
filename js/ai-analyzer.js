@@ -113,20 +113,15 @@ class DeepSeekAnalyzer {
     }
 
     const systemPrompt = `
-Eres un auditor experto y riguroso de calidad de datos en salud pública para reportes de gestantes (SIGIRES MSPS Colombia).
-Analizarás una estructura de datos reportada en 5 hojas (100% enmascarada).
+Eres un auditor ultra-breve de calidad de datos en salud pública (SIGIRES MSPS).
+Analiza los datos enmascarados del reporte. Año de referencia: ${controlPeriodYear || '2026'}.
 
-AÑO DE REFERENCIA DEL REPORTE: ${controlPeriodYear || '2026'}
+REGLA DE SALIDA ULTRA-CORTA (MÁXIMO 1 LÍNEA POR ERROR):
+- SI NO HAY ERRORES, responde SOLO esto:
+"✔ Sin anomalías detectadas en el reporte."
 
-TU LISTA DE COMPROBACIÓN OBLIGATORIA:
-1. AUDITORÍA DE AÑOS Y FECHAS: Revisa CADA fecha en todas las hojas. Si alguna fecha pertenece a un año diferente a ${controlPeriodYear || '2026'} (ej. 2025 o anterior) o es futura/imposible, DEBES REPORTARLA COMO ANOMALÍA GRAVE.
-2. COHERENCIA DE ATENCIONES: Verifica si las fechas de atenciones, seguimientos o urgencias son posteriores a la fecha probable de parto o anteriores a la fecha de inicio del periodo.
-3. DATOS FALTANTES O ANÓMALOS: Revisa si hay valores numéricos fuera de rango razonable.
-
-FORMATO DE SALIDA:
-- Si detectas errores o anomalías: Indica [Hoja], [Fila o Documento], la fecha/dato erróneo y por qué es inconsistente.
-- Si NO detectas ninguna anomalía tras revisar todos los campos, responde únicamente:
-"✔ Sin anomalías ni inconsistencias lógicas detectadas en el reporte."
+- SI HAY ERRORES, no des explicaciones ni introducciones largas. Responde ÚNICAMENTE en viñetas de 1 sola línea así:
+• [Hoja · Fila/Doc]: Breve descripción del error (ej. Fecha 2025 no coincide con año 2026).
 `.trim();
 
     const userMessage = `
@@ -147,8 +142,8 @@ ${JSON.stringify(maskedData, null, 2)}
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userMessage }
         ],
-        temperature: 0.2,
-        max_tokens: 1500
+        temperature: 0.1,
+        max_tokens: 400
       })
     });
 
