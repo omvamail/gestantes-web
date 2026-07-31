@@ -53,8 +53,15 @@ class DeepSeekAnalyzer {
           continue;
         }
 
-        const newRow = [...row];
+        // 1. Normalizar todas las celdas primero (fechas YYYY-MM-DD, mayúsculas, etc.)
+        const newRow = row.map((c, cIdx) => {
+          if (sheetName === '2 - ID gestantes' && cIdx === 17) {
+            return cleanAddress(c);
+          }
+          return formatCell(c);
+        });
 
+        // 2. Enmascarar campos sensibles sobre la fila ya normalizada
         if (sheetName === '1 - Control') {
           // Col 2: NIT (índice 2)
           if (newRow[2]) newRow[2] = this.maskValue(this.ipsMap, newRow[2], 'NIT');
