@@ -1,6 +1,6 @@
-# Gestantes SIGIRES - Aplicación Web Client-Side (100% Privada)
+# Gestantes SIGIRES - Aplicación Web Client-Side (💖 Para Ivone)
 
-Aplicación web estática (Client-Side) para la lectura, validación y conversión de reportes semanales de gestantes (`origen.xlsx`) al formato plano `.txt` de **SIGIRES / Nueva EPS**.
+Aplicación web estática (Client-Side) para la lectura, validación y conversión de reportes semanales de gestantes (`origen.xlsx`) al formato plano `.txt` del **Ministerio de Salud y Protección Social (MSPS)**.
 
 ## 🔒 Privacidad y Seguridad Total (Cero Servidores)
 - **100% Proceso en el Navegador:** El procesamiento del archivo Excel se realiza en la memoria RAM del navegador web usando JavaScript (`SheetJS`).
