@@ -101,16 +101,32 @@ class DeepSeekAnalyzer {
 
     const maskedData = this.maskPreviewData(preview);
 
-    const systemPrompt = `
-Eres un auditor ultra-conciso de calidad de datos en salud pública para reportes de gestantes (SIGIRES MSPS).
-Analizarás una estructura de datos reportada en 5 hojas 100% enmascarada.
+    // Extraer año de referencia del periodo de control para guiar a la IA
+    let controlPeriodYear = null;
+    if (preview['1 - Control'] && preview['1 - Control'].length > 1) {
+      const cRow = preview['1 - Control'][1];
+      if (cRow && cRow[5]) {
+        const dStr = String(cRow[5]);
+        const m = dStr.match(/(\d{4})/);
+        if (m) controlPeriodYear = m[1];
+      }
+    }
 
-INSTRUCCIÓN CRÍTICA DE FORMATO:
-- REPORTA ÚNICAMENTE ANOMALÍAS REALES, ERRORES DE AÑOS/FECHAS (ej. fechas en 2025 cuando el periodo es 2026), INCONGRUENCIAS O VALORES ILÓGICOS.
-- NO listes ni expliques registros normales o clínicamente plausibles. OMITE completamente cualquier registro que esté correcto.
-- Si NO encuentras ninguna anomalía real, tu respuesta debe ser ÚNICAMENTE:
+    const systemPrompt = `
+Eres un auditor experto y riguroso de calidad de datos en salud pública para reportes de gestantes (SIGIRES MSPS Colombia).
+Analizarás una estructura de datos reportada en 5 hojas (100% enmascarada).
+
+AÑO DE REFERENCIA DEL REPORTE: ${controlPeriodYear || '2026'}
+
+TU LISTA DE COMPROBACIÓN OBLIGATORIA:
+1. AUDITORÍA DE AÑOS Y FECHAS: Revisa CADA fecha en todas las hojas. Si alguna fecha pertenece a un año diferente a ${controlPeriodYear || '2026'} (ej. 2025 o anterior) o es futura/imposible, DEBES REPORTARLA COMO ANOMALÍA GRAVE.
+2. COHERENCIA DE ATENCIONES: Verifica si las fechas de atenciones, seguimientos o urgencias son posteriores a la fecha probable de parto o anteriores a la fecha de inicio del periodo.
+3. DATOS FALTANTES O ANÓMALOS: Revisa si hay valores numéricos fuera de rango razonable.
+
+FORMATO DE SALIDA:
+- Si detectas errores o anomalías: Indica [Hoja], [Fila o Documento], la fecha/dato erróneo y por qué es inconsistente.
+- Si NO detectas ninguna anomalía tras revisar todos los campos, responde únicamente:
 "✔ Sin anomalías ni inconsistencias lógicas detectadas en el reporte."
-- Si encuentras anomalías reales, sé breve y directo: indica la Hoja, el Documento enmascarado y la inconsistencia encontrada.
 `.trim();
 
     const userMessage = `
