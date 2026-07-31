@@ -6,4 +6,5 @@ generated/
 history.db
 .env
 *.xlsx
-*.txt
+GESTANTE_MSPS_*.txt
+!requirements.txt
