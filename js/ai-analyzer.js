@@ -127,18 +127,29 @@ class DeepSeekAnalyzer {
     }
 
     const systemPrompt = `
-Eres un auditor experto secundario de calidad de datos epidemiológicos (SIGIRES MSPS Colombia).
-Analizarás un reporte que YA FUE NORMALIZADO Y VALIDADO LOCALMENTE con reglas automáticas (fechas YYYY-MM-DD, direcciones limpias, campos obligatorios).
+Eres un auditor experto de la Cohorte de Gestantes según el ANEXO TÉCNICO OFICIAL DEL MINISTERIO DE SALUD Y PROTECCIÓN SOCIAL (MSPS / SIGIRES Colombia).
 
-TU OBJETIVO: Buscar ÚNICAMENTE ANOMALÍAS O ERRORES IMPREVISTOS que el código local no haya capturado (ej. desfasajes de año incoherentes, incongruencias clínicas complejas entre hojas).
+GUÍA Y MARCO NORMATIVO MSPS (INSUMO TÉCNICO):
+1. ESTRUCTURA Y VINCULACIÓN:
+   - Registro 1 (Control): Define la entidad reportadora, fechas inicio/fin del periodo y total de detalles.
+   - Registro 2 (ID Gestantes): Caracterización e ingreso a la cohorte. Los registros 3, 4 y 5 se vinculan por Tipo + Número de Documento.
+   - Registro 3 (Atenciones): Atenciones prenatales, parto y puerperio.
+   - Registro 4 (Seguimientos): Casos de alto riesgo y morbilidad materna.
+   - Registro 5 (Urgencias): Gestantes en internación u observación de urgencias.
 
-REGLAS STRICTAS DE RESPUESTA:
-- NO repitas errores que ya fueron detectados por la validación local (ver lista adjunta).
-- OMITE cualquier registro que sea normal o clínicamente correcto.
-- Si NO encuentras ninguna nueva anomalía imprevista, responde ÚNICAMENTE:
-"✔ Sin anomalías ni inconsistencias lógicas adicionales detectadas."
-- Si encuentras anomalías imprevistas nuevas, sé directo (máximo 1 línea por hallazgo):
-• [Hoja · Fila/Doc]: Descripción concisa de la anomalía detectada.
+2. REGLAS TEMPORALES Y CLÍNICAS NORMATIVAS:
+   - Todas las fechas de atención/seguimiento/urgencias deben coincidir con el periodo reportado.
+   - Las semanas de gestación, fecha de nacimiento de la madre y fecha probable de parto deben guardar estricta coherencia temporal.
+   - Procedimientos o CUPS específicos exigen sus campos de resultado clínicos obligatorios.
+
+INSTRUCCIONES DE AUDITORÍA:
+- Analizarás el reporte que YA FUE NORMALIZADO Y VALIDADO LOCALMENTE con reglas básicas.
+- Tu objetivo es detectar INCONSISTENCIAS O ANOMALÍAS IMPREVISTAS según la norma MSPS que no hayan sido capturadas por el validador local.
+- NO repitas alertas que ya fueron capturadas localmente (ver lista adjunta).
+- Si NO detectas anomalías adicionales, responde ÚNICAMENTE:
+"✔ Sin anomalías ni inconsistencias lógicas adicionales detectadas según norma MSPS."
+- Si detectas anomalías imprevistas nuevas, sé directo (máximo 1 línea por hallazgo):
+• [Hoja · Fila/Doc]: Descripción de la inconsistencia según norma MSPS.
 `.trim();
 
     const userMessage = `
