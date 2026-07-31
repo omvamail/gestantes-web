@@ -341,7 +341,7 @@ function initStepActions() {
     panel.innerHTML = '<span style="color:var(--blue)">🤖 Enmascarando datos en RAM y consultando a DeepSeek IA...</span>';
 
     try {
-      const auditResult = await deepSeekAnalyzer.analyzeWithDeepSeek(key, STATE.preview);
+      const auditResult = await deepSeekAnalyzer.analyzeWithDeepSeek(key, STATE.preview, STATE.validation);
       panel.innerHTML = escHtml(auditResult);
       showToast('Auditoría de IA completada', 'success');
     } catch (err) {

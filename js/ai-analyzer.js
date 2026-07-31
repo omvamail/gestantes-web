@@ -99,42 +99,54 @@ class DeepSeekAnalyzer {
   }
 
   /**
-   * Consulta a la API de DeepSeek pasando los datos enmascarados
+   * Consulta a la API de DeepSeek pasando los datos normalizados y enmascarados + errores locales
    */
-  async analyzeWithDeepSeek(apiKey, preview) {
+  async analyzeWithDeepSeek(apiKey, preview, validation) {
     if (!apiKey || apiKey.trim() === '') {
       throw new Error('Debes ingresar tu API Key de DeepSeek.');
     }
 
     const maskedData = this.maskPreviewData(preview);
 
-    // Extraer año de referencia del periodo de control para guiar a la IA
-    let controlPeriodYear = null;
-    if (preview['1 - Control'] && preview['1 - Control'].length > 1) {
-      const cRow = preview['1 - Control'][1];
-      if (cRow && cRow[5]) {
-        const dStr = String(cRow[5]);
-        const m = dStr.match(/(\d{4})/);
-        if (m) controlPeriodYear = m[1];
-      }
+    // Enmascarar las alertas locales ya detectadas para dar contexto completo a la IA
+    const maskedLocalIssues = [];
+    if (validation && (validation.errors || validation.warnings)) {
+      const issues = [...(validation.errors || []), ...(validation.warnings || [])];
+      issues.forEach(iss => {
+        let msg = iss.message;
+        this.docMap.forEach((maskedToken, realVal) => {
+          msg = msg.replaceAll(realVal, maskedToken);
+        });
+        maskedLocalIssues.push({
+          sheet: iss.sheet,
+          row: iss.row,
+          col: iss.col,
+          alert: msg
+        });
+      });
     }
 
     const systemPrompt = `
-Eres un auditor ultra-breve de calidad de datos en salud pública (SIGIRES MSPS).
-Analiza los datos enmascarados del reporte. Año de referencia: ${controlPeriodYear || '2026'}.
+Eres un auditor experto secundario de calidad de datos epidemiológicos (SIGIRES MSPS Colombia).
+Analizarás un reporte que YA FUE NORMALIZADO Y VALIDADO LOCALMENTE con reglas automáticas (fechas YYYY-MM-DD, direcciones limpias, campos obligatorios).
 
-REGLA DE SALIDA ULTRA-CORTA (MÁXIMO 1 LÍNEA POR ERROR):
-- SI NO HAY ERRORES, responde SOLO esto:
-"✔ Sin anomalías detectadas en el reporte."
+TU OBJETIVO: Buscar ÚNICAMENTE ANOMALÍAS O ERRORES IMPREVISTOS que el código local no haya capturado (ej. desfasajes de año incoherentes, incongruencias clínicas complejas entre hojas).
 
-- SI HAY ERRORES, no des explicaciones ni introducciones largas. Responde ÚNICAMENTE en viñetas de 1 sola línea así:
-• [Hoja · Fila/Doc]: Breve descripción del error (ej. Fecha 2025 no coincide con año 2026).
+REGLAS STRICTAS DE RESPUESTA:
+- NO repitas errores que ya fueron detectados por la validación local (ver lista adjunta).
+- OMITE cualquier registro que sea normal o clínicamente correcto.
+- Si NO encuentras ninguna nueva anomalía imprevista, responde ÚNICAMENTE:
+"✔ Sin anomalías ni inconsistencias lógicas adicionales detectadas."
+- Si encuentras anomalías imprevistas nuevas, sé directo (máximo 1 línea por hallazgo):
+• [Hoja · Fila/Doc]: Descripción concisa de la anomalía detectada.
 `.trim();
 
     const userMessage = `
-Aquí están los datos estructurados enmascarados del reporte actual para auditoría de anomalías:
-
+DATOS DEL REPORTE 100% NORMALIZADOS Y ENMASCARADOS:
 ${JSON.stringify(maskedData, null, 2)}
+
+ALERTAS YA CAPTURADAS POR LA VALIDACIÓN LOCAL (NO REPETIR):
+${JSON.stringify(maskedLocalIssues, null, 2)}
 `.trim();
 
     const response = await fetch('https://api.deepseek.com/chat/completions', {
