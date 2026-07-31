@@ -321,6 +321,34 @@ function initStepActions() {
 
   $('btn-generate').addEventListener('click', generateSigiresInMemory);
   $('btn-new').addEventListener('click', resetAll);
+  $('btn-refresh-history')?.addEventListener('click', loadHistory);
+
+  // DeepSeek AI handler
+  const aiKeyInput = $('ai-api-key');
+  if (aiKeyInput && sessionStorage.getItem('deepseek_key')) {
+    aiKeyInput.value = sessionStorage.getItem('deepseek_key');
+  }
+
+  $('btn-run-ai')?.addEventListener('click', async () => {
+    const key = aiKeyInput ? aiKeyInput.value : '';
+    if (!key || key.trim() === '') {
+      showToast('Ingresa tu DeepSeek API Key', 'warning');
+      return;
+    }
+    sessionStorage.setItem('deepseek_key', key.trim());
+    const panel = $('ai-result-panel');
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:var(--blue)">🤖 Enmascarando datos en RAM y consultando a DeepSeek IA...</span>';
+
+    try {
+      const auditResult = await deepSeekAnalyzer.analyzeWithDeepSeek(key, STATE.preview);
+      panel.innerHTML = escHtml(auditResult);
+      showToast('Auditoría de IA completada', 'success');
+    } catch (err) {
+      panel.innerHTML = `<span style="color:var(--error)">✖ Error en la consulta a la IA: ${escHtml(err.message)}</span>`;
+      showToast('Error en la auditoría con IA', 'error');
+    }
+  });
 }
 
 function generateSigiresInMemory() {

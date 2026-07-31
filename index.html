@@ -148,6 +148,29 @@
         <div class="issues-list" id="issues-list"></div>
       </details>
 
+      <!-- Panel de Inteligencia Artificial (DeepSeek) -->
+      <details class="ai-details" id="ai-details">
+        <summary class="ai-summary">
+          <span style="display:flex;align-items:center;gap:8px">
+            <span>🤖 Escanear anomalías imprevistas con IA (DeepSeek)</span>
+            <span class="ai-tag">Enmascarado</span>
+          </span>
+          <span class="ai-summary-sub">🔒 Cédulas, nombres, apellidos y direcciones son enmascarados en RAM</span>
+        </summary>
+        <div class="ai-body">
+          <p style="font-size:0.82rem;color:var(--text-sub);margin-bottom:12px">
+            Ingresa tu API Key de DeepSeek para auditar el reporte en busca de errores lógicos o años desfasados.
+          </p>
+          <div class="ai-key-row">
+            <input type="password" id="ai-api-key" placeholder="Pega tu DeepSeek API Key (sk-...)" class="input-text" />
+            <button class="btn btn-outline" id="btn-run-ai" type="button">
+              <span>🔍 Auditar con IA</span>
+            </button>
+          </div>
+          <div id="ai-result-panel" class="ai-result-panel" style="display:none"></div>
+        </div>
+      </details>
+
       <div class="card-actions" style="justify-content:space-between">
         <button class="btn btn-ghost" id="btn-back-upload">← Volver al inicio</button>
         <button class="btn btn-primary btn-lg" id="btn-generate">
@@ -221,6 +244,7 @@
   <script src="js/xlsx.full.min.js?v=1.1"></script>
   <script src="js/converter.js?v=1.1"></script>
   <script src="js/validator.js?v=1.1"></script>
+  <script src="js/ai-analyzer.js?v=1.1"></script>
   <script src="js/app.js?v=1.1"></script>
 </body>
 </html>
