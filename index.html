@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Convertidor y validador de gestantes para SIGIRES - 100% Privado en el navegador" />
+  <title>Gestantes SIGIRES · Procesamiento 100% Local y Privado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a5 5 0 0 1 5 5c0 3-2 5.5-5 7-3-1.5-5-4-5-7a5 5 0 0 1 5-5z"/>
+            <path d="M12 14c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z"/>
+            <circle cx="12" cy="17" r="1" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>Gestantes SIGIRES</h1>
+          <p>Convertidor · Nueva EPS / MSPS</p>
+        </div>
+      </div>
+
+      <div class="privacy-badge" title="Tus datos de salud nunca salen de tu navegador">
+        <span class="badge-dot"></span>
+        <span>🔒 100% Local & Privado (Cero Servidores)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="main">
+
+    <!-- PASOS -->
+    <div class="steps-wrap" id="steps-wrap">
+      <div class="step active" id="step-1">
+        <div class="step-circle">1</div>
+        <span class="step-label">Cargar Excel</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step" id="step-2">
+        <div class="step-circle">2</div>
+        <span class="step-label">Validar datos</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step" id="step-3">
+        <div class="step-circle">3</div>
+        <span class="step-label">Descargar .TXT</span>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 1: SUBIR -->
+    <section class="card" id="sec-upload">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Cargar reporte semanal en Excel</h2>
+          <p class="card-subtitle">Selecciona el archivo <code>origen.xlsx</code>. El cálculo se realiza en tu memoria RAM sin enviar nada a internet.</p>
+        </div>
+      </div>
+
+      <div class="drop-zone" id="drop-zone" tabindex="0" role="button" aria-label="Zona de carga de archivo">
+        <div class="drop-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="12" y1="18" x2="12" y2="12"/>
+            <polyline points="9 15 12 12 15 15"/>
+          </svg>
+        </div>
+        <p class="drop-title">Arrastra el archivo Excel aquí</p>
+        <p class="drop-sub">o haz clic para examinar en tu equipo</p>
+        <button class="btn btn-outline" id="btn-browse" type="button">Examinar archivo</button>
+        <input type="file" id="file-input" accept=".xlsx" hidden aria-label="Seleccionar archivo Excel" />
+      </div>
+
+      <div class="file-info-bar" id="file-info-bar" style="display:none">
+        <div class="file-icon-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M8 10h8M8 14h5"/>
+          </svg>
+        </div>
+        <div class="file-meta">
+          <span id="fi-name" class="file-name-text"></span>
+          <span id="fi-size" class="file-size-text"></span>
+        </div>
+        <button class="btn-icon-only" id="btn-clear" title="Quitar archivo">✕</button>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn btn-primary btn-lg" id="btn-upload" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <polyline points="16 16 12 12 8 16"/>
+            <line x1="12" y1="12" x2="12" y2="21"/>
+            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+          </svg>
+          Procesar y validar localmente
+        </button>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: PREVIEW & VALIDACIÓN -->
+    <section class="card" id="sec-preview" style="display:none">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Vista previa y reglas SIGIRES</h2>
+          <p class="card-subtitle">Verificación automática de calidad de datos antes de generar el archivo plano</p>
+        </div>
+        <div class="validation-summary-badge" id="val-badge"></div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" id="stats-row"></div>
+
+      <!-- Panel de estado -->
+      <div class="val-panel" id="val-panel"></div>
+
+      <!-- Sheet Pills -->
+      <div class="sheet-pills" id="sheet-pills"></div>
+
+      <!-- Tabs -->
+      <div class="tabs-bar" id="tabs-bar" role="tablist"></div>
+
+      <!-- Tabla -->
+      <div class="table-wrapper" id="table-wrapper">
+        <p class="no-data">Cargando vista previa de la hoja...</p>
+      </div>
+
+      <!-- Detalle de alertas -->
+      <details class="issues-details" id="issues-details" style="display:none">
+        <summary class="issues-summary" id="issues-summary"></summary>
+        <div class="issues-list" id="issues-list"></div>
+      </details>
+
+      <div class="card-actions" style="justify-content:space-between">
+        <button class="btn btn-ghost" id="btn-back-upload">← Volver al inicio</button>
+        <button class="btn btn-primary btn-lg" id="btn-generate">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Generar archivo plano (.TXT)
+        </button>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: DESCARGA RESULTADO -->
+    <section class="card card-success" id="sec-download" style="display:none">
+      <div class="success-header">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="card-title">¡Archivo plano generado!</h2>
+          <p class="card-subtitle">Formato SIGIRES estandarizado listo para reportar a la EPS</p>
+        </div>
+      </div>
+
+      <div class="result-box" id="result-box"></div>
+      <div class="result-stats" id="result-stats"></div>
+
+      <div class="card-actions" style="justify-content:space-between">
+        <button class="btn btn-ghost" id="btn-new">Procesar otro archivo</button>
+        <a class="btn btn-success btn-lg" id="btn-download" href="#" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <polyline points="8 17 12 21 16 17"/>
+            <line x1="12" y1="12" x2="12" y2="21"/>
+            <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.36"/>
+          </svg>
+          Descargar .TXT
+        </a>
+      </div>
+    </section>
+
+    <!-- HISTORIAL LOCAL -->
+    <section class="card" id="sec-history">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Historial local de conversiones</h2>
+          <p class="card-subtitle">Registro de archivos procesados previamente en este navegador</p>
+        </div>
+      </div>
+      <div id="history-body">
+        <div class="empty-state">
+          <p>Sin historial local aún.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- LOADING OVERLAY -->
+  <div class="loading-overlay" id="loading-overlay" style="display:none">
+    <div class="spinner-wrap">
+      <div class="spinner"></div>
+      <p id="loading-text">Procesando en tu navegador…</p>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div id="toast-container"></div>
+
+  <!-- JS DEPENDENCIES -->
+  <script src="js/xlsx.full.min.js?v=1.1"></script>
+  <script src="js/converter.js?v=1.1"></script>
+  <script src="js/validator.js?v=1.1"></script>
+  <script src="js/app.js?v=1.1"></script>
+</body>
+</html>
